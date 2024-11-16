@@ -1,13 +1,16 @@
+// Constants
+const CLIENT_ID = "874922187178-fptorkdo5dgnppoad0lf2dmr1q5hbvrd.apps.googleusercontent.com";
+const CLIENT_SECRET = "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";
+const REFRESH_TOKEN = "1//04XX6kzypod13CgYIARAAGAQSNwF-L9Irh7OAsMq9Q0v2QGuRsGbt1HMVJ_wY37uhXbmENfuOkbZp5eGrS_JRdD6v8B_OOmbu8as";
+
+// UI Elements
 const fileInput = document.getElementById('fileInput');
 const fileList = document.getElementById('fileList');
 const senderNameInput = document.getElementById('senderName');
 const progressCircle = document.getElementById('progressCircle');
 const progressText = document.getElementById('progressText');
 
-const CLIENT_ID = "874922187178-fptorkdo5dgnppoad0lf2dmr1q5hbvrd.apps.googleusercontent.com";
-const CLIENT_SECRET = "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";
-const REFRESH_TOKEN = "1//04XX6kzypod13CgYIARAAGAQSNwF-L9Irh7OAsMq9Q0v2QGuRsGbt1HMVJ_wY37uhXbmENfuOkbZp5eGrS_JRdD6v8B_OOmbu8as";
-
+// Helper Functions
 async function getAccessToken() {
     const response = await fetch("https://oauth2.googleapis.com/token", {
         method: "POST",
@@ -36,6 +39,19 @@ function updateProgress(progress) {
     progressText.textContent = `${progress}%`;
 }
 
+function displayFiles(files) {
+    files.forEach(file => {
+        const fileDiv = document.createElement('div');
+        fileDiv.className = 'file-item';
+        fileDiv.innerHTML = `
+            <span><i class="fas fa-file-alt"></i> ${file.name}</span>
+            <span>${(file.size / 1024).toFixed(2)} KB</span>
+        `;
+        fileList.appendChild(fileDiv);
+    });
+}
+
+// File Upload Function
 async function uploadFile() {
     const senderName = senderNameInput.value.trim();
     if (!senderName) {
@@ -64,12 +80,12 @@ async function uploadFile() {
 
         const xhr = new XMLHttpRequest();
 
-        xhr.upload.onprogress = function(event) {
+        xhr.upload.onprogress = function (event) {
             const progress = Math.round((event.loaded / event.total) * 100);
             updateProgress(progress);
         };
 
-        xhr.onload = function() {
+        xhr.onload = function () {
             if (xhr.status === 200) {
                 const result = JSON.parse(xhr.responseText);
                 alert(`File ${result.name} uploaded successfully by ${senderName}!`);
@@ -80,7 +96,7 @@ async function uploadFile() {
             resetProgress();
         };
 
-        xhr.onerror = function() {
+        xhr.onerror = function () {
             alert("Error uploading the file.");
             resetProgress();
         };
@@ -90,27 +106,28 @@ async function uploadFile() {
         xhr.send(formData);
     }
 
+    // Clear the file input after successful upload
     fileInput.value = "";
 }
 
-function displayFiles(files) {
-    files.forEach(file => {
-        const fileDiv = document.createElement('div');
-        fileDiv.className = 'file-item';
-        fileDiv.innerHTML = `
-            <span><i class="fas fa-file-alt"></i> ${file.name}</span>
-            <span>${(file.size / 1024).toFixed(2)} KB</span>
-        `;
-        fileList.appendChild(fileDiv);
+// Disable DevTools Functionality
+function disableDevTools() {
+    document.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+            e.preventDefault();
+        }
+        if ((e.ctrlKey && e.shiftKey && e.key === 'J') || (e.ctrlKey && e.shiftKey && e.key === 'C')) {
+            e.preventDefault();
+        }
+        if (e.ctrlKey && e.key === 'U') {
+            e.preventDefault();
+        }
     });
 }
 
-document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-});
-
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'U')) {
-        e.preventDefault();
-    }
-});
+// Initialize Disable DevTools
+disableDevTools();
