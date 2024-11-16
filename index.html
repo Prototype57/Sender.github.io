@@ -14,8 +14,9 @@
         <div class="upload-card">
             <h2>Upload New Files</h2>
             <input type="text" id="senderName" placeholder="Enter your name">
-            <input type="file" id="fileInput" multiple>
-            <button onclick="uploadFile()"><i class="fas fa-upload"></i> Upload File</button>
+            <input type="file" id="fileInput" multiple><button type="button" onclick="uploadFile()" aria-label="Upload File">
+  <i class="fas fa-upload"></i> <span>Upload File</span>
+</button>
 
             <div class="progress-circle" id="progressCircle" style="--progress: 0deg;">
                 <span id="progressText">0%</span>
